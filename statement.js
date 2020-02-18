@@ -1,41 +1,63 @@
-function statement(invoice, plays) {
+//Предполагаем, что import/export настроен и идет отладка только представленной функции
+
+function statement(invoice) {
+
+    // Расчет переменныъ начинается с 0, в случае постоянных клиентов следовало бы принимать эти значения из вне или 
+
     let totalAmount = 0;
     let volumeCredits = 0;
-    let result = 'Счет для ${invoice.customer}\n';
-    const format = new Inti.NumberFormat("ru-RU", {
+    let result = `Счет для ${invoice.customer}\n`;
+    const format = new Intl.NumberFormat("ru-RU", {
         style: "currency",
         currency: "RUB",
         minimumFractionDigits: 2
     }).format;
-    for (let perf of invoice.performances) {
-        const play = plays[perf.playlD];
-        let thisAmount = 0;
-        switch (play.type) {
+
+    function countCost(basicCap, realCap, addCostPerViewer) {
+        return addCostPerViewer * (realCap - basicCap);
+    }
+
+    for (let perf of invoice.performance) {
+        let thisAmount = perf.cost;
+
+        switch (perf.type) {
             case "tragedy":
-                thisAmount = 40000;
-                if (perf.audience > 30) {
-                    thisAmount += 1000 * (perf.audience - 30);
+                //Добавляем стоимость за каждого свыше установленного значения
+                if (perf.audience > perf.basicCapasity) {
+                    thisAmount += countCost(perf.basicCapasity, perf.audience, perf.addCostPerViewer);
                 }
                 break;
+
             case "comedy":
-                thisAmount = 30000;
-                if (perf.audience > 20) {
-                    thisAmount += 10000 + 500 * (perf.audience - 20);
+                if (perf.audience > perf.basicCapasity) {
+                    thisAmount += perf.additionalCostPerf + countCost(perf.basicCapasity, perf.audience, perf.addCostPerViewer);
                 }
                 thisAmount += 300 * perf.audience;
                 break;
             default:
-                throw new Error('неизвестный тип: ${play.type}');
+                throw new Error(`Неизвестный тип: ${perf.type}`);
         }
+
         // Добавление бонусов
+        /**
+         * Бонусы расчитываются только если количество зрителей было больше 30 ? 
+         * (в комедии отметка стоит на 20), не буду менять на количество зрителей, нужны дополнительныевходные данные
+         * В противном случае, поменять переменную 30 на perf.basicCapasity
+         */
+
         volumeCredits += math.max(perf.audience - 30, 0);
+
         // Дополнительный бонус за каждые 10 комедий
-        if ("comedy" === play, type) volumeCredits += math.floor(perf.audience / 5);
+        if ("comedy" === perf.type) {
+            volumeCredits += math.floor(perf.audience / 10);
+        }
+
         // Вывод строки счета
-        result += ' ${play.name}: ${format(thisAmount / 100)}';
-        result += ' (${perf.audience} мест)\n';
+        result += `${perf.playId}: ${format(thisAmount / 100 )}\n`;
+        result += `(${perf.audience} мест)\n`;
         totalAmount += thisAmount;
-        result += 'Итого с вас $(format(totalAmount/100)}\n';
-        result += 'Вы заработали ${volumeCredits} бонусов\n';
+        result += `Итого с вас ${format(totalAmount / 100 )}\n`;
+        result += `Вы заработали ${volumeCredits} бонусов\n`;
         return result;
     }
+}

@@ -1,19 +1,29 @@
 [{
-        "customer": "MDT",
-        "performance": [{
-                "playId": "Гамлет",
-                "audience": 55,
-                "type": "tragedy"
-            },
-            {
-                "playId": "Ромео и Джульетта",
-                "audience": 35,
-                "type": "tragedy"
-            },
-            {
-                "playId": "Отелло",
-                "audience": 40,
-                "type": "comedy"
-            }
-        ]
-    }
+    "customer": "MDT",
+    "performance": [{
+            "playId": "Гамлет",
+            "audience": 55,
+            "type": "tragedy",
+            "cost": 40000,
+            "addCostPerViewer": 1000,
+            "basicCapasity": 30
+        },
+        {
+            "playId": "Ромео и Джульетта",
+            "audience": 35,
+            "type": "tragedy",
+            "cost": 40000,
+            "addCostPerViewer": 1000,
+            "basicCapasity": 30
+        },
+        {
+            "playId": "Отелло",
+            "audience": 40,
+            "type": "comedy",
+            "cost": 30000,
+            "addCostPerViewer": 500,
+            "additionalCostPerf": 10000,
+            "basicCapasity": 20
+        }
+    ]
+}]
